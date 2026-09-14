@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c0f">
+<title>RISCQUEST: Throne of the Tag</title>
+<style>
+:root{
+  --bg:#0b0c0f; --panel:#101218; --panel2:#151923; --line:#232834; --line2:#313845;
+  --ink:#ece7d9; --mut:#9b9480; --dim:#6f695b;
+  --gold:#d2a24c; --gold-hi:#f2d488; --gold-dim:#6e5730;
+  --red:#c05a44; --blue:#7ba3cc; --green:#8aa860;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{
+  margin:0;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+  background:
+    radial-gradient(1100px 520px at 50% -8%, #151b26 0%, rgba(11,12,15,0) 62%),
+    var(--bg);
+  min-height:100vh;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 18px 90px}
+a{color:var(--blue);text-decoration:none}
+a:active{opacity:.7}
+
+/* ---------- masthead ---------- */
+.masthead{padding:34px 0 10px;text-align:center;position:relative}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;color:var(--dim);text-transform:uppercase}
+.game-title{
+  font-family:var(--serif);font-weight:700;font-size:clamp(38px,7vw,62px);
+  letter-spacing:.06em;margin:10px 0 2px;color:var(--ink);
+  text-shadow:0 2px 24px rgba(210,162,76,.14);
+}
+.game-title .q{color:var(--gold)}
+.subtitle{font-family:var(--serif);font-style:italic;font-size:clamp(15px,2.6vw,19px);color:var(--mut);margin:0}
+.gold-rule{height:1px;margin:22px auto;max-width:520px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim) 20%,var(--gold) 50%,var(--gold-dim) 80%,transparent)}
+.season-chip{
+  display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.18em;
+  color:var(--gold-hi);border:1px solid var(--gold-dim);border-radius:999px;
+  padding:7px 16px;background:rgba(210,162,76,.07);text-transform:uppercase;
+}
+.sound-btn{
+  position:absolute;top:26px;right:0;background:none;border:1px solid var(--line2);
+  color:var(--mut);border-radius:999px;width:40px;height:40px;font-size:17px;cursor:pointer;
+}
+.sound-btn[aria-pressed="true"]{color:var(--gold-hi);border-color:var(--gold-dim)}
+@media(max-width:640px){.sound-btn{top:18px}}
+
+/* ---------- sections ---------- */
+section{margin-top:44px}
+.sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:4px}
+.sec-num{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.2em}
+.sec-title{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:.04em;margin:0}
+.sec-note{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-align:right}
+.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:10px}
+
+/* ---------- character sheet ---------- */
+.char-grid{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:900px){.char-grid{grid-template-columns:1.15fr .85fr}}
+.char-main{padding:26px 24px}
+.char-name{font-family:var(--mono);font-size:12px;letter-spacing:.26em;color:var(--mut);text-transform:uppercase}
+.char-class{font-family:var(--serif);font-style:italic;color:var(--gold-hi);font-size:17px;margin:4px 0 14px}
+.rank-line{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.rank-numeral{font-family:var(--serif);font-size:52px;font-weight:700;color:var(--gold);line-height:1}
+.rank-name{font-family:var(--serif);font-size:26px;letter-spacing:.12em}
+.glory{margin-top:14px}
+.glory-num{font-family:var(--mono);font-size:34px;color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.glory-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--dim);text-transform:uppercase}
+.ledger{margin:18px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.ledger li{display:flex;justify-content:space-between;align-items:center;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.ledger .k{color:var(--mut)}
+.ledger .v{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.char-side{padding:26px 24px;border-top:1px solid var(--line)}
+@media(min-width:900px){.char-side{border-top:none;border-left:1px solid var(--line)}}
+.objective-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--dim);text-transform:uppercase;margin-bottom:8px}
+.objective-name{font-family:var(--serif);font-size:19px;margin:0 0 4px}
+.objective-name .rn{color:var(--gold)}
+.objective-desc{color:var(--mut);font-size:14px;margin:0 0 14px}
+.bar{height:8px;border-radius:99px;background:#1d222c;border:1px solid var(--line);overflow:hidden;position:relative}
+.bar > i{display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--gold-dim),var(--gold) 60%,var(--gold-hi));
+  transition:width 1.1s cubic-bezier(.22,.8,.24,1)}
+.bar > i::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);
+  animation:sheen 3.2s ease-in-out infinite}
+@keyframes sheen{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+.bar-meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:7px;letter-spacing:.06em}
+.war-ledger{margin:20px 0 0;padding:0;list-style:none}
+.war-ledger li{display:flex;gap:10px;padding:7px 2px;border-bottom:1px dashed var(--line);font-size:13px;color:var(--mut)}
+.war-ledger .pts{margin-left:auto;font-family:var(--mono);color:var(--gold);white-space:nowrap}
+
+/* ---------- quest board ---------- */
+.quests{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+.qrow{border-bottom:1px solid var(--line);cursor:pointer}
+.qrow:last-child{border-bottom:none}
+.qrow-head{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:15px 18px;align-items:center}
+.qrow-head:active{background:rgba(255,255,255,.02)}
+.q-name{font-family:var(--serif);font-size:17px;font-weight:700}
+.q-sub{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;margin-top:3px}
+.q-tags{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.qtype{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  border:1px solid var(--line2);border-radius:4px;padding:3px 8px;color:var(--mut)}
+.qtype.greenhorn{color:var(--green);border-color:rgba(138,168,96,.4)}
+.qtype.dungeon{color:var(--blue);border-color:rgba(123,163,204,.4)}
+.qtype.necromancer{color:var(--gold-hi);border-color:var(--gold-dim)}
+.qtype.lorekeeper{color:var(--ink);border-color:var(--line2)}
+.qtype.boss{color:var(--red);border-color:rgba(192,90,68,.5)}
+.skulls{font-size:12px;color:var(--gold);letter-spacing:.14em;white-space:nowrap}
+.skulls .off{color:#3a3f4a}
+.qreward{font-family:var(--mono);font-size:12px;color:var(--gold-hi);white-space:nowrap}
+.qdetail{display:none;border-top:1px dashed var(--line2);padding:18px;background:rgba(0,0,0,.22)}
+.qrow.open .qdetail{display:block}
+.qrow.open .q-caret{transform:rotate(180deg)}
+.q-caret{display:inline-block;color:var(--dim);font-size:12px;transition:transform .22s ease}
+.qverdict{font-size:14px;margin:0 0 12px}
+.qverdict strong{color:var(--gold-hi);font-weight:600}
+.qdetail h4{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--dim);text-transform:uppercase;margin:14px 0 6px}
+.qdetail ul{margin:0;padding-left:18px;color:var(--mut);font-size:13.5px}
+.qdetail li{margin:5px 0}
+.qdetail code{font-family:var(--mono);font-size:12.5px;color:var(--ink);background:#1a1f29;padding:1px 6px;border-radius:4px}
+.qevidence{font-size:13px;color:var(--mut);border-left:2px solid var(--gold-dim);padding-left:12px;margin:10px 0}
+.qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px}
+.qintel{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--green);text-transform:uppercase}
+.qintel .dot{display:inline-block;width:7px;height:7px;border-radius:99px;background:var(--green);margin-right:7px;box-shadow:0 0 8px var(--green)}
+
+/* ---------- season ---------- */
+.season-grid{display:grid;grid-template-columns:1fr;gap:0;margin-top:14px}
+@media(min-width:900px){.season-grid{grid-template-columns:.9fr 1.1fr}}
+.season-goal{padding:24px}
+.season-goal .big{font-family:var(--serif);font-size:24px;margin:0 0 6px}
+.season-goal p{color:var(--mut);font-size:14px;margin:8px 0}
+.countdown{font-family:var(--mono);font-size:13px;color:var(--gold-hi);letter-spacing:.1em}
+.standings{border-top:1px solid var(--line);padding:8px 0}
+@media(min-width:900px){.standings{border-top:none;border-left:1px solid var(--line)}}
+.srow{display:flex;align-items:center;gap:12px;padding:11px 24px;border-bottom:1px solid var(--line);font-size:14px}
+.srow:last-child{border-bottom:none}
+.srow.you{background:rgba(210,162,76,.06)}
+.srank{font-family:var(--mono);color:var(--dim);width:26px;font-size:12px}
+.sname{flex:1}
+.sname .tag{font-family:var(--mono);font-size:10px;color:var(--gold-hi);letter-spacing:.14em;margin-left:8px}
+.sscore{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:16px}
+
+/* ---------- rivals ---------- */
+.rival{padding:16px 24px;border-bottom:1px solid var(--line)}
+.rival:last-child{border-bottom:none}
+.rival-top{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.rival-name{font-family:var(--serif);font-size:17px;font-weight:700}
+.rival-epithet{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+.rival-score{margin-left:auto;font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums}
+.rival.you .rival-score{color:var(--gold-hi)}
+.rbar{height:10px;border-radius:99px;background:#1d222c;overflow:hidden;border:1px solid var(--line)}
+.rbar > i{display:block;height:100%;border-radius:99px;background:#4a5160;transition:width 1.1s cubic-bezier(.22,.8,.24,1)}
+.rival.you .rbar > i{background:linear-gradient(90deg,var(--gold-dim),var(--gold) 60%,var(--gold-hi))}
+.rival.crown .rbar > i{background:linear-gradient(90deg,#5a4a2e,var(--gold-dim))}
+.rival-note{font-size:12.5px;color:var(--dim);margin-top:8px}
+
+/* ---------- achievements ---------- */
+.seals{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:560px){.seals{grid-template-columns:repeat(2,1fr)}}
+.seal{border:1px solid var(--line);border-radius:10px;padding:16px 12px;text-align:center;background:var(--panel);opacity:.55}
+.seal.unlocked{opacity:1;border-color:var(--gold-dim);background:linear-gradient(180deg,rgba(210,162,76,.1),var(--panel) 70%)}
+.seal-mark{width:46px;height:46px;margin:0 auto 10px;border-radius:99px;border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:19px;color:var(--dim)}
+.seal.unlocked .seal-mark{border-color:var(--gold);color:var(--gold-hi);box-shadow:0 0 18px rgba(210,162,76,.25)}
+.seal-name{font-family:var(--serif);font-size:14px;font-weight:700}
+.seal.unlocked .seal-name{color:var(--gold-hi)}
+.seal-desc{font-size:11.5px;color:var(--mut);margin-top:4px;line-height:1.45}
+
+/* ---------- road ---------- */
+.road{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+.road table{width:100%;border-collapse:collapse;font-size:13.5px}
+.road th{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+  text-align:left;padding:12px 16px;border-bottom:1px solid var(--line2);font-weight:400}
+.road td{padding:11px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+.road tr:last-child td{border-bottom:none}
+.road .ms{font-family:var(--serif);font-weight:700}
+.road .est{font-family:var(--mono);font-size:12.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.road .real{color:var(--gold-hi)}
+.road-note{font-size:12.5px;color:var(--dim);margin:12px 2px 0;line-height:1.6}
+
+/* ---------- dm notes ---------- */
+.dm{padding:24px}
+.dm p,.dm li{font-size:14px;color:var(--mut)}
+.dm ul{margin:10px 0;padding-left:20px}
+.dm li{margin:7px 0}
+.dm strong{color:var(--ink);font-weight:600}
+.dm .rule{border-left:2px solid var(--gold-dim);padding:10px 14px;margin:16px 0;background:rgba(210,162,76,.05);font-size:13.5px}
+.dm .sig{font-family:var(--serif);font-style:italic;color:var(--gold-hi);margin-top:14px}
+
+/* ---------- footer ---------- */
+.colophon{text-align:center;margin-top:56px;color:var(--dim);font-family:var(--mono);font-size:11px;letter-spacing:.14em;line-height:2}
+
+/* ---------- level-up overlay ---------- */
+#veil{position:fixed;inset:0;background:rgba(5,6,8,.92);display:none;align-items:center;justify-content:center;z-index:50;padding:24px}
+#veil.show{display:flex}
+.fanfare{text-align:center;max-width:420px;animation:rise .7s cubic-bezier(.2,.9,.25,1.2)}
+@keyframes rise{from{transform:scale(.82) translateY(26px);opacity:0}to{transform:none;opacity:1}}
+.fanfare .fk{font-family:var(--mono);font-size:12px;letter-spacing:.4em;color:var(--gold);text-transform:uppercase}
+.fseal{width:110px;height:110px;margin:22px auto;border-radius:99px;border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:44px;color:var(--gold-hi);
+  box-shadow:0 0 60px rgba(210,162,76,.35),inset 0 0 30px rgba(210,162,76,.12);
+  animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 60px rgba(210,162,76,.35),inset 0 0 30px rgba(210,162,76,.12)}50%{box-shadow:0 0 90px rgba(210,162,76,.55),inset 0 0 30px rgba(210,162,76,.2)}}
+.fanfare h2{font-family:var(--serif);font-size:34px;letter-spacing:.14em;margin:6px 0;color:var(--ink)}
+.fanfare p{color:var(--mut);font-size:14px}
+.claim{margin-top:20px;background:linear-gradient(180deg,var(--gold-hi),var(--gold));border:none;border-radius:999px;
+  padding:14px 44px;font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;
+  color:#241a08;font-weight:700;cursor:pointer}
+.claim:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+<div id="veil" role="dialog" aria-label="Rank up">
+  <div class="fanfare">
+    <div class="fk">Rank up</div>
+    <div class="fseal" id="fseal">II</div>
+    <h2 id="frank">BLOODED</h2>
+    <p id="fdesc"></p>
+    <button class="claim" id="claim">Claim rank</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="masthead">
+    <button class="sound-btn" id="soundBtn" aria-pressed="false" title="Toggle fanfare sound">♪</button>
+    <div class="kicker">A campaign in seven bounties</div>
+    <h1 class="game-title">RISC<span class="q">Q</span>UEST</h1>
+    <p class="subtitle">Throne of the Tag</p>
+    <div class="gold-rule"></div>
+    <span class="season-chip" id="seasonChip">Season 1 · September 2026</span>
+  </header>
+
+  <main>
+    <section id="character">
+      <div class="sec-head">
+        <span class="sec-num">I</span><h2 class="sec-title">The Character</h2>
+        <span class="sec-note">Christopher Dillinger · id 33107775</span>
+      </div>
+      <div class="panel char-grid">
+        <div class="char-main">
+          <div class="char-name">Christopher Dillinger</div>
+          <div class="char-class">Trap Handler, sworn to the mechanism</div>
+          <div class="rank-line">
+            <span class="rank-numeral" id="rankNumeral">I</span>
+            <span class="rank-name" id="rankName">LANDED</span>
+          </div>
+          <div class="glory">
+            <div class="glory-num" id="gloryNum">0</div>
+            <div class="glory-label">Glory</div>
+          </div>
+          <ul class="ledger" id="statLedger"></ul>
+        </div>
+        <div class="char-side">
+          <div class="objective-label">Next objective</div>
+          <p class="objective-name" id="objName"></p>
+          <p class="objective-desc" id="objDesc"></p>
+          <div class="bar"><i id="objBar"></i></div>
+          <div class="bar-meta"><span id="objProg"></span><span id="objPct"></span></div>
+          <div class="objective-label" style="margin-top:22px">War ledger · recent glory</div>
+          <ul class="war-ledger" id="warLedger"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="quests">
+      <div class="sec-head">
+        <span class="sec-num">II</span><h2 class="sec-title">The Quest Board</h2>
+        <span class="sec-note" id="questCount"></span>
+      </div>
+      <div class="quests" id="questBoard"></div>
+    </section>
+
+    <section id="season">
+      <div class="sec-head">
+        <span class="sec-num">III</span><h2 class="sec-title">The Season Ladder</h2>
+        <span class="sec-note">resets monthly</span>
+      </div>
+      <div class="panel season-grid">
+        <div class="season-goal">
+          <p class="big" id="seasonName">Season 1 · September 2026</p>
+          <p><strong style="color:var(--ink)">Season goal:</strong> <span id="seasonGoal"></span></p>
+          <p class="countdown" id="countdown"></p>
+          <p>The 30-day board is a monthly season. Win the month, take the season. Nine seasons a year are quiet enough to steal.</p>
+        </div>
+        <div class="standings" id="standings"></div>
+      </div>
+    </section>
+
+    <section id="rivals">
+      <div class="sec-head">
+        <span class="sec-num">IV</span><h2 class="sec-title">The Road Is Guarded</h2>
+        <span class="sec-note">all-time tag score</span>
+      </div>
+      <div class="panel" id="rivalList" style="margin-top:14px"></div>
+    </section>
+
+    <section id="achievements">
+      <div class="sec-head">
+        <span class="sec-num">V</span><h2 class="sec-title">Hall of Seals</h2>
+        <span class="sec-note" id="sealCount"></span>
+      </div>
+      <div class="seals" id="sealWall"></div>
+    </section>
+
+    <section id="road">
+      <div class="sec-head">
+        <span class="sec-num">VI</span><h2 class="sec-title">Road to the Throne</h2>
+        <span class="sec-note">three-point estimates</span>
+      </div>
+      <div class="road" style="margin-top:14px">
+        <table>
+          <thead><tr><th>Milestone</th><th>Optimistic</th><th>Realistic</th><th>Pessimistic</th></tr></thead>
+          <tbody id="roadBody"></tbody>
+        </table>
+      </div>
+      <p class="road-note" id="roadNote"></p>
+    </section>
+
+    <section id="dmnotes">
+      <div class="sec-head">
+        <span class="sec-num">VII</span><h2 class="sec-title">The DM's Notes</h2>
+        <span class="sec-note">how to play</span>
+      </div>
+      <div class="panel dm" style="margin-top:14px">
+        <ul>
+          <li><strong>The scout</strong> watches the realm every 12 hours and pins new bounties to this board.</li>
+          <li><strong>The spymaster</strong> (me) drafts the battle plan for each bounty: verdict, mechanism, proof.</li>
+          <li><strong>You fight the duel:</strong> rewrite the plan in your own words, post it on Stack Overflow.</li>
+          <li><strong>Report back in chat:</strong> posted, upvoted, accepted. Glory is awarded and the board updates. That is when you ding.</li>
+        </ul>
+        <div class="rule">This game has no grind. Glory flows from accepts and upvotes, never from post count. Spamming weak answers earns nothing and gets you exiled (banned). The game respects you; play it like it matters, because the throne is real.</div>
+        <p class="sig">Your DM, Emi</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    RISCQUEST · THRONE OF THE TAG<br>
+    PRIVATE CAMPAIGN · DM EMI · SCOUT EVERY 12H
+  </footer>
+</div>
+<script>
+"use strict";
+/* ============================================================
+   GAME STATE. The DM (Emi) maintains this block. Everything on
+   the board renders from here, so a single edit updates the war.
+   ============================================================ */
+const GAME = {
+  updated: "2026-09-14",
+  rank: 1,
+  glory: 70,
+  stats: [
+    ["Answers posted", "0"],
+    ["Answers accepted", "0"],
+    ["Upvotes earned", "0"],
+    ["Best answer score", "--"],
+    ["Bounties taken", "0"],
+    ["Wounds (downvotes)", "0"]
+  ],
+  ranks: [
+    { numeral:"I",    name:"LANDED",          objective:"Create your account",        desc:"You have entered the realm.", prog:[1,1] },
+    { numeral:"II",   name:"BLOODED",         objective:"Post your first answer",     desc:"One answer, in your own words, on any bounty below.", prog:[0,1] },
+    { numeral:"III",  name:"NOTICED",         objective:"Earn your first upvote",     desc:"A stranger found your answer useful.", prog:[0,1] },
+    { numeral:"IV",   name:"VOICE",           objective:"Reach 50 reputation",        desc:"Commenting unlocks. The tavern hears you.", prog:[1,50] },
+    { numeral:"V",    name:"RECOGNIZED",      objective:"Bronze riscv badge",         desc:"100 tag score across at least 20 answers.", prog:[0,100] },
+    { numeral:"VI",   name:"CONTENDER",       objective:"Top 8 on the 30-day board",  desc:"Place on a monthly season ladder.", prog:[0,1] },
+    { numeral:"VII",  name:"NAMESAKE'S BANE", objective:"Pass the other Chris",       desc:"215 all-time. There can be only one.", prog:[1,215] },
+    { numeral:"VIII", name:"VETERAN",         objective:"Silver riscv badge",         desc:"400 tag score across at least 80 answers.", prog:[0,400] },
+    { numeral:"IX",   name:"SEASON CHAMPION", objective:"Win a 30-day season",        desc:"Finish a calendar month at #1.", prog:[0,1] },
+    { numeral:"X",    name:"THE THRONE",      objective:"Gold badge and #1 all-time", desc:"1000 tag score, 200 answers, the crown.", prog:[0,1000] }
+  ],
+  gloryLog: [
+    { d:"2026-09-14", e:"Battle plan: The Missing Barrier", p:10 },
+    { d:"2026-09-14", e:"Battle plan: The Preserved Register", p:10 },
+    { d:"2026-09-13", e:"Battle plan: The False Interrupt", p:10 },
+    { d:"2026-09-13", e:"Battle plan: The Hidden Hart", p:10 },
+    { d:"2026-09-13", e:"Battle plan: The Stale Register", p:10 },
+    { d:"2026-09-13", e:"Battle plan: The Reservation", p:10 },
+    { d:"2026-09-12", e:"Battle plan: The False Syscall", p:10 }
+  ],
+  quests: [
+    {
+      id:"79747810", name:"The Preserved Register", type:"greenhorn", skulls:2,
+      meta:"Q 79747810 · 0 answers · ~280 views · asked Jun 2026",
+      verdict:"On rv64 Linux, <code>ecall</code> clobbers only <code>a0</code>. <strong><code>a1</code> survives the round trip</strong>, because the kernel saves the whole register file and writes the return value into <code>a0</code> alone.",
+      mechanism:[
+        "<code>ecall</code> itself preserves nothing; it traps to the kernel, and survival is the kernel's doing.",
+        "Trap entry saves every user register into <code>pt_regs</code> before anything else runs.",
+        "The syscall return path writes only <code>regs-&gt;a0</code>; <code>a1</code> is never assigned on the way back.",
+        "glibc agrees: its syscall wrapper marks only <code>a0</code> as clobbered, so gcc keeps live values in <code>a1</code>."
+      ],
+      evidence:"Live qemu-riscv64 sentinel test (only a0 changed across getpid) plus kernel source: traps.c, syscall.h, glibc sysdep.h.",
+      edge:"rv32 differs: 64-bit returns use a1 for the high half. Bare metal: your handler preserves exactly what it saves.",
+      reward:"50 Glory · accept likely (zero answers, engaged asker)",
+      url:"https://stackoverflow.com/questions/79747810/risc-v-a1-register-assumptions-after-ecall-execution"
+    },
+    {
+      id:"79564665", name:"The Missing Barrier", type:"greenhorn", skulls:3,
+      meta:"Q 79564665 · 0 answers · asked Apr 2026 · benchmarking",
+      verdict:"There is <strong>no DSB equivalent</strong> in base RISC-V. <code>fence</code> orders memory operations only, so the asker's fear (the trailing <code>csrr cycle</code> slipping ahead of the loads) is architecturally valid.",
+      mechanism:[
+        "ARM DSB drains everything; RISC-V <code>fence</code> orders only predecessor/successor memory sets.",
+        "A <code>csrr cycle</code> is not a memory operation, so no fence placement constrains it.",
+        "The working recipe: <code>fence</code> around the measured region, then a long loop so residual slop becomes noise.",
+        "Never fence between every load: one fence after the batch already covers all loads."
+      ],
+      evidence:"Spec text (FENCE orders memory accesses, quoted) plus a bare-metal QEMU run: 181,065 cycles for 80,000 loads.",
+      edge:"rdcycle traps in Linux userspace without kernel permission; use rdtime there. fence.i is irrelevant to data loads.",
+      reward:"50 Glory · zero answers, clean shot",
+      url:"https://stackoverflow.com/questions/79564665"
+    },
+    {
+      id:"78562503", name:"The False Syscall", type:"dungeon", skulls:2,
+      meta:"Q 78562503 · 0 answers · 314 views · asked Jun 2024",
+      verdict:"<code>a7=1024</code> is <strong>RARS's private Open service</strong>, not a Linux syscall. On real Linux the same bytes dispatch to nothing and the kernel returns <code>-ENOSYS</code>.",
+      mechanism:[
+        "<code>ecall</code> raises a trap; whatever handles it decides what <code>a7</code> means. The ISA leaves it to the environment.",
+        "RARS's handler is Java: Open = 1024, flags 0/1/9, fd or -1 in <code>a0</code>.",
+        "Linux riscv64 uses the generic table: <code>openat</code> = 56, top syscall ~473. There is no 1024.",
+        "So on Linux the open never happens; <code>a0</code> comes back -38 and every later read fails."
+      ],
+      evidence:"RARS Syscall.properties + SyscallOpen.java, kernel unistd.h, and a live qemu-riscv64 run today: exit code 218, meaning a0 was -38 (-ENOSYS). Observed, not derived.",
+      edge:"RARS Read/Write/Close numbers coincidentally match Linux, which hides the mismatch until open. The C version works because libc translates fopen to openat(56).",
+      reward:"50 Glory · asker's exact confusion, both environments explained",
+      url:"https://stackoverflow.com/questions/78562503/cant-open-a-file-image-gray-in-assembly-risc-v-windows-and-also-linux"
+    },
+    {
+      id:"70242113", name:"The Reservation", type:"necromancer", skulls:3,
+      meta:"Q 70242113 · 4,184 views · 2 answers (top +2) · no accept · asked 2021",
+      verdict:"A reservation is <strong>per-hart architectural state: a valid bit plus an address range</strong>. <code>SC</code> succeeds only while a valid, matching reservation still stands.",
+      mechanism:[
+        "LR loads the word and registers a reservation on its address range; SC writes only if the reservation is still valid.",
+        "The spec's must-fail list: wrong address, another hart's store into the set, or any SC between the LR and SC.",
+        "One reservation per hart; SC pairs with the most recent LR in program order.",
+        "Silicon typically keeps a per-hart (valid, range) register cleared by coherence traffic; the SC just reads its own bit."
+      ],
+      evidence:"Spec section 5.2 (Zalrsc), quoted must-fail sentences, plus a 4-case bare-metal QEMU matrix on 2 harts: cross-hart store fails SC, immediate pair succeeds, second LR replaces the first, SC alone fails.",
+      edge:"Spurious SC failure is legal (traps may drop reservations). Keep LR/SC sequences to a dozen instructions, no loads/stores between.",
+      reward:"50 Glory · unlocks the NECROMANCER seal if accepted",
+      url:"https://stackoverflow.com/questions/70242113/whats-reservation-in-risc-vs-lr-instruction"
+    },
+    {
+      id:"79237441", name:"The Stale Register", type:"dungeon", skulls:3,
+      meta:"Q 79237441 · 398 views · 1 answer (+1) · no accept · asked Jan 2026",
+      verdict:"The syscall number was right all along (<code>a7=1</code> is PrintInt in Ripes). The <strong>5-stage model without hazard detection handles <code>ecall</code> in decode, before <code>li a7,1</code> reaches writeback</strong>, so Ripes reads stale <code>a7=0</code>.",
+      mechanism:[
+        "Ripes numbers are its own ABI: PrintInt = 1, Exit = 10. The number was never the problem.",
+        "The ecall checker fires when ecall reaches ID; at that moment the <code>addi a7,x0,1</code> is still in EX, three stages from writeback.",
+        "In no-hazard models the stall signal is hardwired to 0, so nothing waits. In hazard models the hazard unit stalls the ecall.",
+        "Every number the asker tried had the same shape (li immediately before ecall), so every attempt read the same stale 0."
+      ],
+      evidence:"Ripes source: the exact error string in ripes_syscall.cpp, the register-file read in processorhandler.cpp, the hardwired-0 stall in rv5s_no_hz.h.",
+      edge:"Fix: switch to the single-cycle or hazard-detection model, or insert 3 NOPs after the last syscall-register setup. Same hazard bites a0.",
+      reward:"50 Glory · outscore the +1 incumbent",
+      url:"https://stackoverflow.com/questions/79237441/riscv-syscalls-in-ripes"
+    },
+    {
+      id:"64863737", name:"The False Interrupt", type:"lorekeeper", skulls:4,
+      meta:"Q 64863737 · 2 answers (top +4) · no accept · asked 2020",
+      verdict:"<code>ecall</code> is a <strong>synchronous exception, not a software interrupt</strong>. Real software interrupts are raised by writing a pending bit: the memory-mapped <code>msip</code> (M-mode) or <code>sip.SSIP</code> (S-mode). Their main use is inter-processor interrupts.",
+      mechanism:[
+        "<code>mcause</code>'s interrupt bit separates the worlds: 0 is exception (ecall = codes 8/9/11), 1 is interrupt (codes 1/3 are software interrupts).",
+        "M-mode: firmware writes the hart's memory-mapped msip register (address is platform-defined).",
+        "S-mode: SSIP is writable in sip; M-mode firmware sets it on the OS's behalf.",
+        "End to end: hart A writes hart B's msip, B traps with IRQ_M_SOFT, OpenSBI's sbi_ipi_process() raises SSIP, S-mode takes the interrupt."
+      ],
+      evidence:"Privileged spec sections 3.1.9, 4.1.3, 3.1.15 (Table 105) plus OpenSBI source: sbi_ipi.c and sbi_trap.c.",
+      edge:"Single-hart systems may omit msip. The msip write is not synchronously visible; firmware must not assume instant pending.",
+      reward:"50 Glory · +75 more if the +4 incumbent is a ranked defender",
+      url:"https://stackoverflow.com/questions/64863737/risc-v-software-interrupts"
+    },
+    {
+      id:"77925031", name:"The Hidden Hart", type:"dungeon", skulls:2,
+      meta:"Q 77925031 · 1 answer (+0) · no accept · asked 2024",
+      verdict:"<strong>Save the startup value in <code>a0</code>.</strong> <code>mhartid</code> is machine-mode read-only by design, and the firmware-to-kernel boot contract delivers the hart ID in <code>a0</code>.",
+      mechanism:[
+        "The ISA deliberately gives lower modes no hartid CSR; identity is the firmware's to deliver.",
+        "The Linux boot protocol pins it: a0 = hartid, a1 = devicetree address. OpenSBI and U-Boot implement this.",
+        "So the asker's method is not ISA, it is firmware ABI, which is exactly what production code (including Linux) uses.",
+        "The existing answer's trap-to-M-mode trick works but traps on every query and breaks under foreign firmware."
+      ],
+      evidence:"Privileged spec 3.1.5 (mhartid, CSR 0xF14 MRO), the Linux boot protocol quote, and an honest negative: SBI v3.0 does not pin a0=hartid, the convention lives one layer down.",
+      edge:"Hart IDs need not be dense; never use one as an array index. Save a0 before the first C call clobbers it.",
+      reward:"50 Glory · the incumbent is +0, easy outscore",
+      url:"https://stackoverflow.com/questions/77925031/getting-hartid-in-non-m-mode"
+    }
+  ],
+  season: {
+    name:"Season 1 · September 2026",
+    goal:"Score your first points and finish top 3.",
+    board:[
+      { name:"A rival", score:2 },
+      { name:"A rival", score:1 },
+      { name:"You", score:0, you:true }
+    ]
+  },
+  rivals: [
+    { name:"Erik Eidt", epithet:"The Throne", score:398, cls:"crown",
+      note:"Final boss. 398 all-time across 146 posts. The crown has sat long enough." },
+    { name:"Chris", epithet:"The Namesake", score:215, cls:"",
+      note:"A usurper wears your name at #2 all-time: 55 posts, score 215. There can be only one Chris." },
+    { name:"You", epithet:"The Challenger", score:1, cls:"you",
+      note:"214 to the namesake. 397 to the throne. Every duel shortens the road." }
+  ],
+  achievements: [
+    { mark:"I",   name:"First Blood",  desc:"Post your first answer", unlocked:false },
+    { mark:"II",  name:"Accepted",     desc:"Take the green check", unlocked:false },
+    { mark:"III", name:"Giantslayer",  desc:"Outscore a ranked defender on their own question", unlocked:false },
+    { mark:"IV",  name:"Name Thief",   desc:"Pass the other Chris on the all-time board", unlocked:false },
+    { mark:"V",   name:"Necromancer",  desc:"Accepted answer on a question 2+ years old", unlocked:false },
+    { mark:"VI",  name:"Lorekeeper",   desc:"An answer reaches +10", unlocked:false },
+    { mark:"VII", name:"Seasoned",     desc:"Win a 30-day season", unlocked:false },
+    { mark:"VIII",name:"Flawless",     desc:"10 answers, zero downvotes", unlocked:false },
+    { mark:"IX",  name:"Goldblooded",  desc:"The gold riscv badge", unlocked:false }
+  ],
+  road: [
+    { ms:"Bronze badge · 100 score, 20 answers", opt:"Dec 2026", real:"Mar 2027", pess:"Sep 2027" },
+    { ms:"Namesake's bane · 215 all-time", opt:"Feb 2027", real:"Oct 2027", pess:"mid-2028" },
+    { ms:"Silver badge · 400 score, 80 answers", opt:"mid-2027", real:"Sep 2028", pess:"2030" },
+    { ms:"The throne · 1000 score, 200 answers, #1", opt:"2029", real:"2031", pess:"2033" }
+  ],
+  roadNote:"Model: one quality answer per week, 50% accept rate, +4 average score. Optimistic: two per week at +5. Pessimistic: one every two weeks at +2. Recalibrated monthly from actuals. The tag is quiet and high-view backlog answers compound, which is why the realistic line bends earlier than the post count suggests."
+};
+
+/* ================= RENDER ================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function renderCharacter(){
+  const r = GAME.ranks[GAME.rank-1];
+  const next = GAME.ranks[Math.min(GAME.rank, GAME.ranks.length-1)];
+  $("#rankNumeral").textContent = r.numeral;
+  $("#rankName").textContent = r.name;
+  $("#gloryNum").textContent = GAME.glory.toLocaleString("en-US");
+  $("#statLedger").innerHTML = GAME.stats.map(s =>
+    "<li><span class='k'>"+esc(s[0])+"</span><span class='v'>"+esc(s[1])+"</span></li>").join("");
+  $("#objName").innerHTML = "RANK <span class='rn'>"+esc(next.numeral)+"</span> · "+esc(next.name);
+  $("#objDesc").textContent = next.objective + ". " + next.desc;
+  const have = next.prog[0], need = next.prog[1];
+  const pct = Math.min(100, Math.round(have/need*100));
+  requestAnimationFrame(()=>{ $("#objBar").style.width = pct + "%"; });
+  $("#objProg").textContent = have + " / " + need;
+  $("#objPct").textContent = pct + "%";
+  $("#warLedger").innerHTML = GAME.gloryLog.slice(0,5).map(g =>
+    "<li><span>"+esc(g.d)+"</span><span>"+esc(g.e)+"</span><span class='pts'>+"+g.p+"</span></li>").join("");
+}
+
+function skulls(n){
+  let s = "";
+  for(let i=0;i<5;i++) s += i<n ? "◆" : "<span class='off'>◇</span>";
+  return s;
+}
+
+function renderQuests(){
+  $("#questCount").textContent = GAME.quests.length + " bounties pinned";
+  $("#questBoard").innerHTML = GAME.quests.map((q,i) =>
+    "<div class='qrow' data-i='"+i+"'>" +
+      "<div class='qrow-head'>" +
+        "<div><div class='q-name'>"+esc(q.name)+"</div>" +
+        "<div class='q-sub'>"+esc(q.meta)+"</div></div>" +
+        "<div class='q-tags'><span class='qtype "+q.type+"'>"+q.type+"</span>" +
+        "<span class='skulls'>"+skulls(q.skulls)+"</span>" +
+        "<span class='qreward'>+"+esc(q.reward.split(" ")[0])+"</span>" +
+        "<span class='q-caret'>▾</span></div>" +
+      "</div>" +
+      "<div class='qdetail'>" +
+        "<p class='qverdict'>"+q.verdict+"</p>" +
+        "<h4>The mechanism</h4><ul>" +
+          q.mechanism.map(m=>"<li>"+m+"</li>").join("") +
+        "</ul>" +
+        "<h4>Evidence</h4><p class='qevidence'>"+esc(q.evidence)+"</p>" +
+        "<h4>Edge</h4><p class='qevidence' style='border-color:var(--line2)'>"+esc(q.edge)+"</p>" +
+        "<div class='qfoot'><span class='qintel'><span class='dot'></span>Battle plan ready · "+esc(q.reward)+"</span>" +
+        "<a href='"+q.url+"' target='_blank' rel='noopener'>View on Stack Overflow →</a></div>" +
+      "</div>" +
+    "</div>").join("");
+  document.querySelectorAll(".qrow-head").forEach(h =>
+    h.addEventListener("click", ()=> h.parentElement.classList.toggle("open")));
+}
+
+function renderSeason(){
+  $("#seasonName").textContent = GAME.season.name;
+  $("#seasonGoal").textContent = GAME.season.goal;
+  const end = new Date(2026, 8, 30, 23, 59, 59).getTime();
+  const days = Math.max(0, Math.ceil((end - Date.now())/864e5));
+  $("#countdown").textContent = days + (days===1 ? " day remains" : " days remain") + " in Season 1";
+  const board = GAME.season.board.slice().sort((a,b)=>b.score-a.score);
+  $("#standings").innerHTML = board.map((r,i) =>
+    "<div class='srow"+(r.you?" you":"")+"'><span class='srank'>"+(i+1)+"</span>" +
+    "<span class='sname'>"+esc(r.name)+(r.you?"<span class='tag'>YOU</span>":"")+"</span>" +
+    "<span class='sscore'>"+r.score+"</span></div>").join("");
+}
+
+function renderRivals(){
+  const max = Math.max.apply(null, GAME.rivals.map(r=>r.score));
+  $("#rivalList").innerHTML = GAME.rivals.map(r =>
+    "<div class='rival "+r.cls+"'><div class='rival-top'>" +
+    "<span class='rival-name'>"+esc(r.name)+"</span>" +
+    "<span class='rival-epithet'>"+esc(r.epithet)+"</span>" +
+    "<span class='rival-score'>"+r.score+"</span></div>" +
+    "<div class='rbar'><i data-w='"+Math.max(2,Math.round(r.score/max*100))+"'></i></div>" +
+    "<div class='rival-note'>"+esc(r.note)+"</div></div>").join("");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.querySelectorAll(".rbar > i").forEach(b=>{ b.style.width = b.dataset.w + "%"; });
+  }));
+}
+
+function renderAchievements(){
+  const un = GAME.achievements.filter(a=>a.unlocked).length;
+  $("#sealCount").textContent = un + " / " + GAME.achievements.length + " seals";
+  $("#sealWall").innerHTML = GAME.achievements.map(a =>
+    "<div class='seal"+(a.unlocked?" unlocked":"")+"'><div class='seal-mark'>"+esc(a.mark)+"</div>" +
+    "<div class='seal-name'>"+esc(a.name)+"</div><div class='seal-desc'>"+esc(a.desc)+"</div></div>").join("");
+}
+
+function renderRoad(){
+  $("#roadBody").innerHTML = GAME.road.map(r =>
+    "<tr><td class='ms'>"+esc(r.ms)+"</td><td class='est'>"+esc(r.opt)+"</td>" +
+    "<td class='est real'>"+esc(r.real)+"</td><td class='est'>"+esc(r.pess)+"</td></tr>").join("");
+  $("#roadNote").textContent = GAME.roadNote;
+}
+
+/* ================= FANFARE ================= */
+let audioOn = false, actx = null;
+function store(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function read(k,d){ try{ const v = localStorage.getItem(k); return v===null?d:v; }catch(e){ return d; } }
+
+function chime(){
+  if(!audioOn) return;
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    actx = actx || new AC();
+    const t = actx.currentTime;
+    [[523.25,0],[659.25,.16],[783.99,.32],[1046.5,.48]].forEach(pair=>{
+      const f=pair[0], d=pair[1];
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.type="sine"; o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001, t+d);
+      g.gain.linearRampToValueAtTime(0.22, t+d+0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+d+1.4);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t+d); o.stop(t+d+1.5);
+    });
+  }catch(e){}
+}
+
+function maybeFanfare(){
+  const seen = parseInt(read("rq_seenRank","1"),10) || 1;
+  if(GAME.rank > seen){
+    const r = GAME.ranks[GAME.rank-1];
+    $("#fseal").textContent = r.numeral;
+    $("#frank").textContent = r.name;
+    $("#fdesc").textContent = r.objective + ". " + r.desc;
+    $("#veil").classList.add("show");
+    $("#claim").addEventListener("click", ()=>{
+      chime();
+      store("rq_seenRank", String(GAME.rank));
+      $("#veil").classList.remove("show");
+    }, { once:true });
+  }
+}
+
+$("#soundBtn").addEventListener("click", function(){
+  audioOn = !audioOn;
+  this.setAttribute("aria-pressed", String(audioOn));
+  store("rq_sound", audioOn ? "1" : "0");
+  if(audioOn) chime();
+});
+if(read("rq_sound","0")==="1"){ audioOn = true; $("#soundBtn").setAttribute("aria-pressed","true"); }
+
+/* ================= GO ================= */
+renderCharacter();
+renderQuests();
+renderSeason();
+renderRivals();
+renderAchievements();
+renderRoad();
+maybeFanfare();
+</script>
+</body>
+</html>
