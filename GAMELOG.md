@@ -41,8 +41,12 @@ Private campaign board for Chris's Stack Overflow RISC-V quest.
 ## Rank-up checklist (when Chris reports an outcome)
 
 1. Verify on Stack Overflow (question page: his answer exists, score, accepted?).
-2. Append glory to GAME.gloryLog, update GAME.glory, GAME.stats, quest status if resolved.
-3. If a rank objective completes, bump GAME.rank (the board plays the fanfare on his next open).
-4. If an achievement unlocks, set unlocked:true.
+2. Append a dated entry to GAME.chronicle (Glory auto-sums from it; never edit a total by hand). Update GAME.stats. If a quest resolved, set its status ("answered"/"accepted") and date.
+3. If a rank objective completes, bump GAME.rank and stamp that rank's date (the board plays the fanfare on his next open).
+4. If an achievement unlocks, set unlocked:true and stamp its date. If an SO milestone completes, stamp its date. If a road projection is achieved, stamp its date.
 5. Commit + push repo, artifact.edit the same changes.
 6. Announce in this side chat with ceremony. Never a dry diff.
+
+## History law (2026-09-14)
+
+Nothing is ever erased. Completed ranks, milestones, seals, quests, road projections, and seasons keep their dates forever and stay visible on the board. The Chronicle is append-only: every state change adds a dated entry, never rewrites one. Past (dated completions), present (current state), future (objectives and projections) must all read clearly at a glance.

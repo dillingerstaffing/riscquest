@@ -228,6 +228,30 @@ section{margin-top:44px}
 .ms-top{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mut);margin-bottom:6px}
 .ms-top .mono{font-family:var(--mono);color:var(--ink);white-space:nowrap}
 .rival-sub{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;margin:-2px 0 8px}
+
+/* ---------- ladder + chronicle ---------- */
+.ladder{margin-top:10px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.ladder-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px}
+.ladder-row:last-child{border-bottom:none}
+.ladder-row .lr{font-family:var(--mono);color:var(--gold-hi);width:30px;flex:none}
+.ladder-row .ln{font-family:var(--serif);font-weight:700;letter-spacing:.04em}
+.ladder-row .lx{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--dim);text-align:right}
+.ladder-row.done{background:rgba(201,162,75,.06)}
+.ladder-row.done .lx{color:var(--gold)}
+.ladder-row.now{background:rgba(201,162,75,.12);box-shadow:inset 3px 0 0 var(--gold)}
+.ladder-row.now .lx{color:var(--gold-hi)}
+.ladder-row.todo{opacity:.55}
+.qstatus{font-family:var(--mono);font-size:10px;letter-spacing:.14em;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--dim);margin-left:auto;white-space:nowrap;flex:none}
+.qstatus.answered{color:var(--gold);border-color:var(--gold-dim)}
+.qstatus.accepted{color:#0d0b06;background:var(--gold);border-color:var(--gold)}
+.chron-list{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.chron-item{display:flex;gap:14px;align-items:baseline;padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.chron-item:last-child{border-bottom:none}
+.chron-date{font-family:var(--mono);font-size:11px;color:var(--gold);white-space:nowrap;flex:none}
+.chron-item .cp{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold-hi);white-space:nowrap;flex:none}
+.a-date{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);margin-top:6px}
+.a-date.got{color:var(--gold)}
+.ms-done{color:var(--gold);font-family:var(--mono);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -278,6 +302,8 @@ section{margin-top:44px}
           <p class="objective-desc" id="objDesc"></p>
           <div class="bar"><i id="objBar"></i></div>
           <div class="bar-meta"><span id="objProg"></span><span id="objPct"></span></div>
+          <div class="objective-label" style="margin-top:22px">The ladder · past, present, future</div>
+          <div class="ladder" id="ladder"></div>
           <div class="objective-label" style="margin-top:22px">War ledger · recent glory</div>
           <ul class="war-ledger" id="warLedger"></ul>
         </div>
@@ -319,6 +345,7 @@ section{margin-top:44px}
         </div>
         <div class="standings" id="standings"></div>
       </div>
+      <div id="pastSeasons" style="margin-top:12px"></div>
     </section>
 
     <section id="rivals">
@@ -364,15 +391,24 @@ section{margin-top:44px}
       </div>
     </section>
 
+    <section id="chronicle">
+      <div class="sec-head">
+        <span class="sec-num">IX</span><h2 class="sec-title">The Chronicle</h2>
+        <span class="sec-note">the full saga · newest first · nothing is ever erased</span>
+      </div>
+      <div class="chron-list" id="chronList" style="margin-top:14px"></div>
+    </section>
+
     <section id="dmnotes">
       <div class="sec-head">
-        <span class="sec-num">IX</span><h2 class="sec-title">The DM's Notes</h2>
+        <span class="sec-num">X</span><h2 class="sec-title">The DM's Notes</h2>
         <span class="sec-note">how to play</span>
       </div>
       <div class="panel dm" style="margin-top:14px">
         <ul>
           <li><strong>The loop:</strong> the scout pins bounties every 12 hours, I draft the battle plan, you fight the duel and report back in chat. The <strong>Combat Manual</strong> above is the complete mapping.</li>
           <li><strong>Seasons</strong> run on calendar months. <strong>Road to the Throne</strong> dates recalibrate monthly from your actuals.</li>
+          <li><strong>Nothing is ever erased.</strong> Completed ranks, milestones, seals, quests, and seasons keep their dates forever. The <strong>Chronicle</strong> below is the full saga, newest first.</li>
         </ul>
         <div class="rule">This game has no grind. Glory flows from battle plans, accepts, and upvotes, weighted toward real outcomes. It never flows from post count: spamming weak answers earns nothing and gets you exiled (banned). The game respects you; play it like it matters, because the throne is real.</div>
         <p class="sig">Your DM, Emi</p>
@@ -394,7 +430,6 @@ section{margin-top:44px}
 const GAME = {
   updated: "2026-09-14",
   rank: 1,
-  glory: 70,
   stats: [
     ["Answers posted", "0"],
     ["Answers accepted", "0"],
@@ -404,7 +439,7 @@ const GAME = {
     ["Wounds (downvotes)", "0"]
   ],
   ranks: [
-    { numeral:"I",    name:"LANDED",          objective:"Create your account",        desc:"You have entered the realm.", prog:[1,1] },
+    { numeral:"I",    name:"LANDED",          objective:"Create your account",        desc:"You have entered the realm.", prog:[1,1], date:"2026-09-14" },
     { numeral:"II",   name:"BLOODED",         objective:"Post your first answer",     desc:"One answer, in your own words, on any bounty below.", prog:[0,1] },
     { numeral:"III",  name:"NOTICED",         objective:"Earn your first upvote",     desc:"A stranger found your answer useful.", prog:[0,1] },
     { numeral:"IV",   name:"VOICE",           objective:"Reach 50 reputation",        desc:"Commenting unlocks. The tavern hears you.", prog:[1,50] },
@@ -415,15 +450,23 @@ const GAME = {
     { numeral:"IX",   name:"SEASON CHAMPION", objective:"Win a 30-day season",        desc:"Finish a calendar month at #1.", prog:[0,1] },
     { numeral:"X",    name:"THE THRONE",      objective:"Gold badge and #1 all-time", desc:"1000 tag score, 200 answers, the crown.", prog:[0,1000] }
   ],
-  gloryLog: [
-    { d:"2026-09-14", e:"Battle plan: The Missing Barrier", p:10 },
-    { d:"2026-09-14", e:"Battle plan: The Preserved Register", p:10 },
-    { d:"2026-09-13", e:"Battle plan: The False Interrupt", p:10 },
-    { d:"2026-09-13", e:"Battle plan: The Hidden Hart", p:10 },
-    { d:"2026-09-13", e:"Battle plan: The Stale Register", p:10 },
-    { d:"2026-09-13", e:"Battle plan: The Reservation", p:10 },
-    { d:"2026-09-12", e:"Battle plan: The False Syscall", p:10 }
+  chronicle: [
+    { d:"2026-09-10", e:"The account is created. Christopher Dillinger, id 33107775, enters the realm." },
+    { d:"2026-09-12", e:"Battle plan drafted: The False Syscall.", p:10 },
+    { d:"2026-09-13", e:"Battle plan drafted: The Reservation.", p:10 },
+    { d:"2026-09-13", e:"Battle plan drafted: The Stale Register.", p:10 },
+    { d:"2026-09-13", e:"Battle plan drafted: The Hidden Hart.", p:10 },
+    { d:"2026-09-13", e:"Battle plan drafted: The False Interrupt.", p:10 },
+    { d:"2026-09-14", e:"Battle plan drafted: The Preserved Register.", p:10 },
+    { d:"2026-09-14", e:"Battle plan drafted: The Missing Barrier.", p:10 },
+    { d:"2026-09-14", e:"RISCQUEST begins. Rank I: LANDED. Seven bounties pinned." }
   ],
+  milestones: [
+    { label:"Comment everywhere · 50 reputation", key:"rep", target:50, date:null },
+    { label:"Bronze riscv badge · 100 tag score", key:"tagScore", target:100, date:null },
+    { label:"Bronze riscv badge · 20 answers", key:"answers", target:20, date:null }
+  ],
+  pastSeasons: [],
   standing: { rep:1, answers:0, tagScore:0, badges:0, verified:"2026-09-10",
     profile:"https://stackoverflow.com/users/33107775/christopher-dillinger" },
   manual: [
@@ -590,7 +633,7 @@ function renderCharacter(){
   const next = GAME.ranks[Math.min(GAME.rank, GAME.ranks.length-1)];
   $("#rankNumeral").textContent = r.numeral;
   $("#rankName").textContent = r.name;
-  $("#gloryNum").textContent = GAME.glory.toLocaleString("en-US");
+  $("#gloryNum").textContent = GAME.chronicle.reduce((a,c)=>a+(c.p||0),0).toLocaleString("en-US");
   $("#statLedger").innerHTML = GAME.stats.map(s =>
     "<li><span class='k'>"+esc(s[0])+"</span><span class='v'>"+esc(s[1])+"</span></li>").join("");
   $("#objName").innerHTML = "RANK <span class='rn'>"+esc(next.numeral)+"</span> · "+esc(next.name);
@@ -600,8 +643,18 @@ function renderCharacter(){
   requestAnimationFrame(()=>{ $("#objBar").style.width = pct + "%"; });
   $("#objProg").textContent = have + " / " + need;
   $("#objPct").textContent = pct + "%";
-  $("#warLedger").innerHTML = GAME.gloryLog.slice(0,5).map(g =>
-    "<li><span>"+esc(g.d)+"</span><span>"+esc(g.e)+"</span><span class='pts'>+"+g.p+"</span></li>").join("");
+  $("#warLedger").innerHTML = GAME.chronicle.filter(c=>c.p).slice(-5).reverse().map(g =>
+    "<li><span>"+esc(g.d)+"</span><span>"+esc(g.e)+"</span><span class='pts'>"+(g.p>0?"+":"")+g.p+"</span></li>").join("");
+  renderLadder();
+}
+
+function renderLadder(){
+  const idx = GAME.rank;
+  $("#ladder").innerHTML = GAME.ranks.map((r,i)=>{
+    const cls = i<idx ? "done" : (i===idx ? "now" : "todo");
+    const lx = i<idx ? (r.date||"done") : (i===idx ? "NOW · "+r.objective : r.objective);
+    return "<div class='ladder-row "+cls+"'><span class='lr'>"+r.numeral+"</span><span class='ln'>"+esc(r.name)+"</span><span class='lx'>"+esc(lx)+"</span></div>";
+  }).join("");
 }
 
 function renderStanding(){
@@ -616,14 +669,11 @@ function renderStanding(){
   ];
   $("#soStats").innerHTML = cells.map(c =>
     "<div class='sostat'><div class='sonum'>"+c[0]+"</div><div class='solab'>"+c[1]+"</div><div class='sosub'>"+c[2]+"</div></div>").join("");
-  const ms = [
-    ["Comment everywhere · 50 reputation", s.rep, 50],
-    ["Bronze riscv badge · 100 tag score", s.tagScore, 100],
-    ["Bronze riscv badge · 20 answers", s.answers, 20]
-  ];
-  $("#soMilestones").innerHTML = ms.map(m => {
-    const pct = Math.min(100, Math.round(m[1]/m[2]*100));
-    return "<div class='msrow'><div class='ms-top'><span>"+m[0]+"</span><span class='mono'>"+m[1]+" / "+m[2]+"</span></div>"+
+  $("#soMilestones").innerHTML = GAME.milestones.map(m => {
+    const v = s[m.key];
+    const pct = Math.min(100, Math.round(v/m.target*100));
+    const right = m.date ? "<span class='ms-done'>✓ "+m.date+"</span>" : "<span class='mono'>"+v+" / "+m.target+"</span>";
+    return "<div class='msrow'><div class='ms-top'><span>"+m.label+"</span>"+right+"</div>"+
       "<div class='bar'><i style='width:"+pct+"%'></i></div></div>";
   }).join("");
 }
@@ -639,6 +689,12 @@ function skulls(n){
   return s;
 }
 
+function questChip(q){
+  const st = q.status || "open";
+  const label = st==="open" ? "OPEN" : (st==="answered" ? "ANSWERED" : "ACCEPTED");
+  return "<span class='qstatus "+st+"'>"+label+"</span>";
+}
+
 function renderQuests(){
   $("#questCount").textContent = GAME.quests.length + " bounties pinned";
   $("#questBoard").innerHTML = GAME.quests.map((q,i) =>
@@ -647,6 +703,7 @@ function renderQuests(){
         "<div><div class='q-name'>"+esc(q.name)+"</div>" +
         "<div class='q-sub'>"+esc(q.meta)+"</div></div>" +
         "<div class='q-tags'><span class='qtype "+q.type+"'>"+q.type+"</span>" +
+        questChip(q) +
         "<span class='skulls'>"+skulls(q.skulls)+"</span>" +
         "<span class='qreward'>+"+esc(q.reward.split(" ")[0])+"</span>" +
         "<span class='q-caret'>▾</span></div>" +
@@ -658,6 +715,7 @@ function renderQuests(){
         "</ul>" +
         "<h4>Evidence</h4><p class='qevidence'>"+esc(q.evidence)+"</p>" +
         "<h4>Edge</h4><p class='qevidence' style='border-color:var(--line2)'>"+esc(q.edge)+"</p>" +
+        (q.date ? "<p class='qevidence' style='border-color:var(--gold-dim)'>"+(q.status==="accepted"?"Answered and accepted ":"Answered ")+q.date+".</p>" : "") +
         "<div class='qfoot'><span class='qintel'><span class='dot'></span>Battle plan ready · "+esc(q.reward)+"</span>" +
         "<a href='"+q.url+"' target='_blank' rel='noopener'>View on Stack Overflow →</a></div>" +
       "</div>" +
@@ -677,6 +735,9 @@ function renderSeason(){
     "<div class='srow"+(r.you?" you":"")+"'><span class='srank'>"+(i+1)+"</span>" +
     "<span class='sname'>"+esc(r.name)+(r.you?"<span class='tag'>YOU</span>":"")+"</span>" +
     "<span class='sscore'>"+r.score+"</span></div>").join("");
+  $("#pastSeasons").innerHTML = GAME.pastSeasons.length ?
+    "<div class='ladder'>"+GAME.pastSeasons.map(p =>
+      "<div class='ladder-row done'><span class='ln' style='font-size:13px'>"+esc(p.label)+"</span><span class='lx'>"+esc(p.result)+"</span></div>").join("")+"</div>" : "";
 }
 
 function renderRivals(){
@@ -699,14 +760,21 @@ function renderAchievements(){
   $("#sealCount").textContent = un + " / " + GAME.achievements.length + " seals";
   $("#sealWall").innerHTML = GAME.achievements.map(a =>
     "<div class='seal"+(a.unlocked?" unlocked":"")+"'><div class='seal-mark'>"+esc(a.mark)+"</div>" +
-    "<div class='seal-name'>"+esc(a.name)+"</div><div class='seal-desc'>"+esc(a.desc)+"</div></div>").join("");
+    "<div class='seal-name'>"+esc(a.name)+"</div><div class='seal-desc'>"+esc(a.desc)+"</div>"+
+    (a.date ? "<div class='a-date got'>earned "+a.date+"</div>" : "<div class='a-date'>locked</div>")+"</div>").join("");
 }
 
 function renderRoad(){
   $("#roadBody").innerHTML = GAME.road.map(r =>
-    "<tr><td class='ms'>"+esc(r.ms)+"</td><td class='est'>"+esc(r.opt)+"</td>" +
+    "<tr><td class='ms'>"+esc(r.ms)+(r.date?" <span class='ms-done'>✓ "+r.date+"</span>":"")+"</td><td class='est'>"+esc(r.opt)+"</td>" +
     "<td class='est real'>"+esc(r.real)+"</td><td class='est'>"+esc(r.pess)+"</td></tr>").join("");
   $("#roadNote").textContent = GAME.roadNote;
+}
+
+function renderChronicle(){
+  $("#chronList").innerHTML = GAME.chronicle.slice().reverse().map(c =>
+    "<div class='chron-item'><span class='chron-date'>"+c.d+"</span><span>"+esc(c.e)+"</span>"+
+    (c.p ? "<span class='cp'>"+(c.p>0?"+":"")+c.p+" Glory</span>" : "")+"</div>").join("");
 }
 
 /* ================= FANFARE ================= */
@@ -766,6 +834,7 @@ renderRivals();
 renderAchievements();
 renderRoad();
 renderManual();
+renderChronicle();
 maybeFanfare();
 </script>
 </body>
