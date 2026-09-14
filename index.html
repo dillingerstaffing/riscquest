@@ -213,6 +213,21 @@ section{margin-top:44px}
   padding:14px 44px;font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;
   color:#241a08;font-weight:700;cursor:pointer}
 .claim:active{transform:scale(.97)}
+
+/* ---------- realm chip + SO standing ---------- */
+.realm-chip{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--mut);margin-top:14px}
+.realm-chip span{color:var(--gold-hi)}
+.realm-chip a{color:var(--blue)}
+.sostats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+@media(max-width:640px){.sostats{grid-template-columns:repeat(2,1fr)}}
+.sostat{border:1px solid var(--line);border-radius:8px;padding:14px 12px;background:rgba(0,0,0,.18);text-align:center}
+.sonum{font-family:var(--mono);font-size:30px;color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.solab{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-top:4px}
+.sosub{font-size:11px;color:var(--dim);margin-top:4px}
+.msrow{margin-top:12px}
+.ms-top{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mut);margin-bottom:6px}
+.ms-top .mono{font-family:var(--mono);color:var(--ink);white-space:nowrap}
+.rival-sub{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;margin:-2px 0 8px}
 </style>
 </head>
 <body>
@@ -229,9 +244,10 @@ section{margin-top:44px}
 <div class="wrap">
   <header class="masthead">
     <button class="sound-btn" id="soundBtn" aria-pressed="false" title="Toggle fanfare sound">♪</button>
-    <div class="kicker">A campaign in seven bounties</div>
+    <div class="kicker">A Stack Overflow campaign</div>
     <h1 class="game-title">RISC<span class="q">Q</span>UEST</h1>
     <p class="subtitle">Throne of the Tag</p>
+    <div class="realm-chip">stackoverflow.com &nbsp;·&nbsp; tag: <span>riscv</span> &nbsp;·&nbsp; <a href="https://stackoverflow.com/users/33107775/christopher-dillinger" target="_blank" rel="noopener">user 33107775 →</a></div>
     <div class="gold-rule"></div>
     <span class="season-chip" id="seasonChip">Season 1 · September 2026</span>
   </header>
@@ -268,9 +284,22 @@ section{margin-top:44px}
       </div>
     </section>
 
+    <section id="standing">
+      <div class="sec-head">
+        <span class="sec-num">II</span><h2 class="sec-title">The Standing</h2>
+        <span class="sec-note">stackoverflow · verified <span id="soVerified"></span></span>
+      </div>
+      <div class="panel" style="margin-top:14px;padding:24px">
+        <div class="objective-label">Stack Overflow today · <a id="soProfile" href="#" target="_blank" rel="noopener">your profile →</a></div>
+        <div class="sostats" id="soStats"></div>
+        <div class="objective-label" style="margin-top:22px">Next SO milestones</div>
+        <div id="soMilestones"></div>
+      </div>
+    </section>
+
     <section id="quests">
       <div class="sec-head">
-        <span class="sec-num">II</span><h2 class="sec-title">The Quest Board</h2>
+        <span class="sec-num">III</span><h2 class="sec-title">The Quest Board</h2>
         <span class="sec-note" id="questCount"></span>
       </div>
       <div class="quests" id="questBoard"></div>
@@ -278,8 +307,8 @@ section{margin-top:44px}
 
     <section id="season">
       <div class="sec-head">
-        <span class="sec-num">III</span><h2 class="sec-title">The Season Ladder</h2>
-        <span class="sec-note">resets monthly</span>
+        <span class="sec-num">IV</span><h2 class="sec-title">The Season Ladder</h2>
+        <span class="sec-note">SO 30-day tag board</span>
       </div>
       <div class="panel season-grid">
         <div class="season-goal">
@@ -294,7 +323,7 @@ section{margin-top:44px}
 
     <section id="rivals">
       <div class="sec-head">
-        <span class="sec-num">IV</span><h2 class="sec-title">The Road Is Guarded</h2>
+        <span class="sec-num">V</span><h2 class="sec-title">The Road Is Guarded</h2>
         <span class="sec-note">all-time tag score</span>
       </div>
       <div class="panel" id="rivalList" style="margin-top:14px"></div>
@@ -302,7 +331,7 @@ section{margin-top:44px}
 
     <section id="achievements">
       <div class="sec-head">
-        <span class="sec-num">V</span><h2 class="sec-title">Hall of Seals</h2>
+        <span class="sec-num">VI</span><h2 class="sec-title">Hall of Seals</h2>
         <span class="sec-note" id="sealCount"></span>
       </div>
       <div class="seals" id="sealWall"></div>
@@ -310,7 +339,7 @@ section{margin-top:44px}
 
     <section id="road">
       <div class="sec-head">
-        <span class="sec-num">VI</span><h2 class="sec-title">Road to the Throne</h2>
+        <span class="sec-num">VII</span><h2 class="sec-title">Road to the Throne</h2>
         <span class="sec-note">three-point estimates</span>
       </div>
       <div class="road" style="margin-top:14px">
@@ -322,17 +351,28 @@ section{margin-top:44px}
       <p class="road-note" id="roadNote"></p>
     </section>
 
+    <section id="manual">
+      <div class="sec-head">
+        <span class="sec-num">VIII</span><h2 class="sec-title">Combat Manual</h2>
+        <span class="sec-note">SO action → game state</span>
+      </div>
+      <div class="road" style="margin-top:14px">
+        <table>
+          <thead><tr><th>On Stack Overflow</th><th>In the game</th></tr></thead>
+          <tbody id="manualBody"></tbody>
+        </table>
+      </div>
+    </section>
+
     <section id="dmnotes">
       <div class="sec-head">
-        <span class="sec-num">VII</span><h2 class="sec-title">The DM's Notes</h2>
+        <span class="sec-num">IX</span><h2 class="sec-title">The DM's Notes</h2>
         <span class="sec-note">how to play</span>
       </div>
       <div class="panel dm" style="margin-top:14px">
         <ul>
-          <li><strong>The scout</strong> watches the realm every 12 hours and pins new bounties to this board.</li>
-          <li><strong>The spymaster</strong> (me) drafts the battle plan for each bounty: verdict, mechanism, proof.</li>
-          <li><strong>You fight the duel:</strong> rewrite the plan in your own words, post it on Stack Overflow.</li>
-          <li><strong>Report back in chat:</strong> posted, upvoted, accepted. Glory is awarded and the board updates. That is when you ding.</li>
+          <li><strong>The loop:</strong> the scout pins bounties every 12 hours, I draft the battle plan, you fight the duel and report back in chat. The <strong>Combat Manual</strong> above is the complete mapping.</li>
+          <li><strong>Seasons</strong> run on calendar months. <strong>Road to the Throne</strong> dates recalibrate monthly from your actuals.</li>
         </ul>
         <div class="rule">This game has no grind. Glory flows from battle plans, accepts, and upvotes, weighted toward real outcomes. It never flows from post count: spamming weak answers earns nothing and gets you exiled (banned). The game respects you; play it like it matters, because the throne is real.</div>
         <p class="sig">Your DM, Emi</p>
@@ -383,6 +423,19 @@ const GAME = {
     { d:"2026-09-13", e:"Battle plan: The Stale Register", p:10 },
     { d:"2026-09-13", e:"Battle plan: The Reservation", p:10 },
     { d:"2026-09-12", e:"Battle plan: The False Syscall", p:10 }
+  ],
+  standing: { rep:1, answers:0, tagScore:0, badges:0, verified:"2026-09-10",
+    profile:"https://stackoverflow.com/users/33107775/christopher-dillinger" },
+  manual: [
+    ["Post an answer", "+50 Glory · progress to BLOODED"],
+    ["Earn an upvote", "+25 Glory each · feeds tag score, NOTICED, VOICE"],
+    ["Answer accepted (green check)", "+100 Glory · unlocks the ACCEPTED seal"],
+    ["Outscore a ranked defender", "+75 Glory · progress to GIANTSLAYER"],
+    ["Earn the bronze / silver / gold riscv badge", "Rank up to RECOGNIZED / VETERAN / THE THRONE"],
+    ["Place top 8 on the 30-day board", "Rank VI · CONTENDER"],
+    ["Win a 30-day season", "Rank IX · SEASON CHAMPION · SEASONED seal"],
+    ["New bounty pinned by the scout", "New quest on the board · +10 Glory per battle plan"],
+    ["Receive a downvote", "-20 Glory · battle scar recorded, never hidden"]
   ],
   quests: [
     {
@@ -501,11 +554,11 @@ const GAME = {
     ]
   },
   rivals: [
-    { name:"Erik Eidt", epithet:"The Throne", score:398, cls:"crown",
-      note:"Final boss. 398 all-time across 146 posts. The crown has sat long enough." },
-    { name:"Chris", epithet:"The Namesake", score:215, cls:"",
-      note:"A usurper wears your name at #2 all-time: 55 posts, score 215. There can be only one Chris." },
-    { name:"You", epithet:"The Challenger", score:1, cls:"you",
+    { name:"Erik Eidt", epithet:"The Throne", score:398, cls:"crown", sub:"398 tag score · 146 posts",
+      note:"Final boss. The crown has sat long enough." },
+    { name:"Chris", epithet:"The Namesake", score:215, cls:"", sub:"215 tag score · 55 posts",
+      note:"A usurper wears your name at #2 all-time. There can be only one Chris." },
+    { name:"You", epithet:"The Challenger", score:1, cls:"you", sub:"1 rep · 0 answers",
       note:"214 to the namesake. 397 to the throne. Every duel shortens the road." }
   ],
   achievements: [
@@ -549,6 +602,35 @@ function renderCharacter(){
   $("#objPct").textContent = pct + "%";
   $("#warLedger").innerHTML = GAME.gloryLog.slice(0,5).map(g =>
     "<li><span>"+esc(g.d)+"</span><span>"+esc(g.e)+"</span><span class='pts'>+"+g.p+"</span></li>").join("");
+}
+
+function renderStanding(){
+  const s = GAME.standing;
+  $("#soVerified").textContent = s.verified;
+  $("#soProfile").href = s.profile;
+  const cells = [
+    [s.rep, "Reputation", "50 unlocks commenting"],
+    [s.answers, "riscv answers", "20 needed for bronze"],
+    [s.tagScore, "riscv tag score", "100 needed for bronze"],
+    [s.badges, "tag badges", "bronze → silver → gold"]
+  ];
+  $("#soStats").innerHTML = cells.map(c =>
+    "<div class='sostat'><div class='sonum'>"+c[0]+"</div><div class='solab'>"+c[1]+"</div><div class='sosub'>"+c[2]+"</div></div>").join("");
+  const ms = [
+    ["Comment everywhere · 50 reputation", s.rep, 50],
+    ["Bronze riscv badge · 100 tag score", s.tagScore, 100],
+    ["Bronze riscv badge · 20 answers", s.answers, 20]
+  ];
+  $("#soMilestones").innerHTML = ms.map(m => {
+    const pct = Math.min(100, Math.round(m[1]/m[2]*100));
+    return "<div class='msrow'><div class='ms-top'><span>"+m[0]+"</span><span class='mono'>"+m[1]+" / "+m[2]+"</span></div>"+
+      "<div class='bar'><i style='width:"+pct+"%'></i></div></div>";
+  }).join("");
+}
+
+function renderManual(){
+  $("#manualBody").innerHTML = GAME.manual.map(m =>
+    "<tr><td class='ms'>"+m[0]+"</td><td class='est'>"+m[1]+"</td></tr>").join("");
 }
 
 function skulls(n){
@@ -604,6 +686,7 @@ function renderRivals(){
     "<span class='rival-name'>"+esc(r.name)+"</span>" +
     "<span class='rival-epithet'>"+esc(r.epithet)+"</span>" +
     "<span class='rival-score'>"+r.score+"</span></div>" +
+    "<div class='rival-sub'>"+esc(r.sub)+"</div>" +
     "<div class='rbar'><i data-w='"+Math.max(2,Math.round(r.score/max*100))+"'></i></div>" +
     "<div class='rival-note'>"+esc(r.note)+"</div></div>").join("");
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
@@ -676,11 +759,13 @@ if(read("rq_sound","0")==="1"){ audioOn = true; $("#soundBtn").setAttribute("ari
 
 /* ================= GO ================= */
 renderCharacter();
+renderStanding();
 renderQuests();
 renderSeason();
 renderRivals();
 renderAchievements();
 renderRoad();
+renderManual();
 maybeFanfare();
 </script>
 </body>
