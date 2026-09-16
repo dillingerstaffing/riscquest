@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0c0f">
 <title>RISCQUEST: Throne of the Tag</title>
+<script>
+  (() => {
+    // Theme: notebook is the default; a stored visitor choice wins.
+    // Runs before the stylesheet is parsed so the first paint is already
+    // the right theme (no flash of the wrong one).
+    try {
+      const t = localStorage.getItem('emi-site-theme');
+      document.documentElement.dataset.theme = t === 'classic' ? 'classic' : 'notebook';
+    } catch (_) {
+      document.documentElement.dataset.theme = 'notebook';
+    }
+  })();
+</script>
 <style>
 :root{
   --bg:#0b0c0f; --panel:#101218; --panel2:#151923; --line:#232834; --line2:#313845;
@@ -29,7 +42,7 @@ a{color:var(--blue);text-decoration:none}
 a:active{opacity:.7}
 
 /* ---------- masthead ---------- */
-.masthead{padding:34px 0 10px;text-align:center;position:relative}
+.masthead{padding:calc(34px + env(safe-area-inset-top)) 0 10px;text-align:center;position:relative}
 .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;color:var(--dim);text-transform:uppercase}
 .game-title{
   font-family:var(--serif);font-weight:700;font-size:clamp(38px,7vw,62px);
@@ -252,6 +265,113 @@ section{margin-top:44px}
 .a-date{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);margin-top:6px}
 .a-date.got{color:var(--gold)}
 .ms-done{color:var(--gold);font-family:var(--mono);white-space:nowrap}
+
+/* ================= Dual theme: notebook (default) and classic =================
+   :root carries the classic gold-on-charcoal war-table identity, untouched.
+   Everything below re-voices the same markup in the notebook design language:
+   flat paper surfaces, committed dark ink, one sanguine accent, hairline
+   rules, serif article typography, margins carrying evidence. */
+[data-theme="notebook"]{
+  --bg:#ece6d5; --panel:#f4efe0; --panel2:#e3dac2; --line:#c9bfa4; --line2:#a89a76;
+  --ink:#241f17; --mut:#5e5648; --dim:#8d8474;
+  --gold:#8c3f22; --gold-hi:#a5542f; --gold-dim:#b3a685;
+  --red:#a8432f; --blue:#2e5a88; --green:#5f7a3e;
+  --paper:#f4efe0;
+}
+html[data-theme="notebook"]{background:#ece6d5}
+[data-theme="notebook"] body{background:var(--bg);font-family:var(--serif)}
+[data-theme="notebook"] ::selection{background:var(--gold);color:#f4efe0}
+[data-theme="notebook"] :focus-visible{outline-color:var(--gold)}
+
+/* Tonal timing on theme switches (both themes). Elements that own their own
+   transitions (bars, carets, seals, the toggle mark) are untouched. */
+body,.panel,.quests,.road,.ladder,.chron-list,.sostat,.seal,.rival,.srow,.qrow,.qdetail,
+.season-chip,.sound-btn,.qtype,.qstatus,.claim,.theme-toggle,.gold-rule,#veil,.fanfare{
+  transition:background-color .45s ease,color .45s ease,border-color .45s ease;
+}
+
+/* Masthead: committed ink, flat hairline rule, no halo. */
+[data-theme="notebook"] .game-title{text-shadow:none}
+[data-theme="notebook"] .gold-rule{background:var(--line2);height:1px}
+[data-theme="notebook"] .season-chip{color:var(--ink);border:1px solid var(--ink);border-radius:2px;background:transparent}
+[data-theme="notebook"] .sound-btn{border-radius:2px;background:transparent}
+
+/* Cards and panels: flat paper, 2px corners, hairlines. */
+[data-theme="notebook"] .panel,
+[data-theme="notebook"] .quests,
+[data-theme="notebook"] .road,
+[data-theme="notebook"] .ladder,
+[data-theme="notebook"] .chron-list,
+[data-theme="notebook"] .seal,
+[data-theme="notebook"] .sostat{background:var(--paper);border-radius:2px}
+[data-theme="notebook"] .qdetail{background:var(--panel2)}
+[data-theme="notebook"] .qdetail code{background:#242019;color:#ece6d5;border-radius:2px}
+[data-theme="notebook"] .qrow-head:active{background:rgba(36,31,23,.05)}
+[data-theme="notebook"] .qevidence{color:var(--mut);border-left-color:var(--gold)}
+
+/* Type chips: hairline frames, 2px corners. */
+[data-theme="notebook"] .qtype{border-radius:2px}
+[data-theme="notebook"] .qstatus{border-radius:2px}
+[data-theme="notebook"] .qstatus.accepted{background:var(--ink);border-color:var(--ink);color:#f4efe0}
+[data-theme="notebook"] .skulls .off{color:#a89a76}
+
+/* Ink discipline (notebook): weight encodes commitment. Committed states are
+   heavy near-black, provisional states stay light, the live edge is sanguine. */
+[data-theme="notebook"] .ladder-row.now .ln{color:var(--gold)}
+[data-theme="notebook"] .road .real{color:var(--ink);font-weight:700}
+[data-theme="notebook"] .qstatus.answered{color:var(--ink);border-color:var(--ink);font-weight:700}
+
+/* Bars: flat sanguine and ink fills, no sheen, no glow. */
+[data-theme="notebook"] .bar{background:#d9cfae;border-color:var(--line2)}
+[data-theme="notebook"] .bar > i{background:var(--gold)}
+[data-theme="notebook"] .bar > i::after{display:none}
+[data-theme="notebook"] .bar,[data-theme="notebook"] .rbar,[data-theme="notebook"] .bar > i{border-radius:3px}
+[data-theme="notebook"] .rbar{background:#d9cfae;border-color:var(--line2)}
+[data-theme="notebook"] .rbar > i{background:#5e5648}
+[data-theme="notebook"] .rival.you .rbar > i{background:var(--gold)}
+[data-theme="notebook"] .rival.crown .rbar > i{background:#8d8474}
+[data-theme="notebook"] .qintel .dot{box-shadow:none}
+
+/* Standings and ladder: sanguine washes, no glow. */
+[data-theme="notebook"] .srow.you{background:rgba(140,63,34,.07)}
+[data-theme="notebook"] .ladder-row.done{background:rgba(140,63,34,.05)}
+[data-theme="notebook"] .ladder-row.now{background:rgba(140,63,34,.10)}
+[data-theme="notebook"] .seal.unlocked{border-color:var(--line2);background:rgba(140,63,34,.06)}
+[data-theme="notebook"] .seal.unlocked .seal-mark{box-shadow:none}
+
+/* The DM's marginalia rule: an ink margin line in sanguine. */
+[data-theme="notebook"] .dm .rule{border-left-color:var(--gold);background:rgba(140,63,34,.06)}
+
+/* Level-up dialog: ink scrim, paper card, ink-plate claim button. */
+[data-theme="notebook"] #veil{background:rgba(36,31,23,.62)}
+[data-theme="notebook"] .fanfare{background:var(--paper);border:1px solid var(--line2);border-radius:2px;padding:34px 30px}
+[data-theme="notebook"] .fseal{box-shadow:none;animation:none}
+[data-theme="notebook"] .claim{background:var(--ink);color:var(--paper);border-radius:2px}
+[data-theme="notebook"] .claim:hover,[data-theme="notebook"] .claim:focus-visible{background:var(--gold);color:#fdfaf1}
+
+/* ---------- theme toggle: a quiet folio mark ---------- */
+.theme-toggle{
+  position:absolute;top:26px;left:0;
+  width:26px;height:26px;display:grid;place-items:center;padding:0;
+  background:transparent;border:1px solid var(--line2);border-radius:2px;cursor:pointer;
+}
+.theme-toggle:hover{border-color:var(--gold)}
+.theme-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.theme-toggle-mark{display:flex;width:12px;height:12px;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
+.theme-toggle-mark i{display:block;width:6px;height:12px}
+.theme-toggle-mark i:first-child{background:#ece6d5}
+.theme-toggle-mark i:last-child{background:#241f17;border-left:1px solid #ece6d5}
+.theme-toggle.is-flipped .theme-toggle-mark{transform:rotate(180deg)}
+@media(max-width:640px){.theme-toggle{top:18px}}
+
+/* ---------- theme wipe: a calm radial reveal from the toggle ---------- */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-new(root){
+  z-index:2147483647;
+  clip-path:circle(0px at var(--tx,50vw) var(--ty,12px));
+  animation:theme-wipe .7s cubic-bezier(.32,.72,.24,1) forwards;
+}
+@keyframes theme-wipe{to{clip-path:circle(150vmax at var(--tx,50vw) var(--ty,12px))}}
 </style>
 </head>
 <body>
@@ -267,6 +387,7 @@ section{margin-top:44px}
 
 <div class="wrap">
   <header class="masthead">
+    <button class="theme-toggle" id="themeToggle" aria-label="Switch to war-table theme"><span class="theme-toggle-mark" aria-hidden="true"><i></i><i></i></span></button>
     <button class="sound-btn" id="soundBtn" aria-pressed="false" title="Toggle fanfare sound">♪</button>
     <div class="kicker">A Stack Overflow campaign</div>
     <h1 class="game-title">RISC<span class="q">Q</span>UEST</h1>
@@ -422,6 +543,47 @@ section{margin-top:44px}
     PRIVATE CAMPAIGN · DM EMI · SCOUT EVERY 12H
   </footer>
 </div>
+<script>
+(() => {
+  // Theme engine: notebook is the default, a stored choice wins (the head
+  // script already set data-theme before first paint). The toggle flips
+  // live; with the view-transition API the new theme wipes in radially
+  // from the toggle, otherwise the tonal CSS transitions carry it.
+  const KEY = 'emi-site-theme';
+  const root = document.documentElement;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const COLORS = { notebook: '#ece6d5', classic: '#0b0c0f' };
+  const btn = document.getElementById('themeToggle');
+  const current = () => (root.dataset.theme === 'classic' ? 'classic' : 'notebook');
+  const otherName = (t) => (t === 'classic' ? 'notebook folio' : 'war-table');
+  function apply(t) {
+    root.dataset.theme = t;
+    if (meta) meta.setAttribute('content', COLORS[t]);
+    if (btn) btn.setAttribute('aria-label', 'Switch to ' + otherName(t) + ' theme');
+  }
+  function toggle() {
+    const next = current() === 'classic' ? 'notebook' : 'classic';
+    try { localStorage.setItem(KEY, next); } catch (_) {}
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (btn) {
+      const r = btn.getBoundingClientRect();
+      root.style.setProperty('--tx', Math.round(r.left + r.width / 2) + 'px');
+      root.style.setProperty('--ty', Math.round(r.top + r.height / 2) + 'px');
+      btn.classList.toggle('is-flipped', next === 'classic');
+    }
+    if (!reduced && document.startViewTransition) {
+      document.startViewTransition(() => apply(next));
+    } else {
+      apply(next);
+    }
+  }
+  if (btn) {
+    btn.classList.toggle('is-flipped', current() === 'classic');
+    btn.addEventListener('click', toggle);
+  }
+  apply(current());
+})();
+</script>
 <script>
 "use strict";
 /* ============================================================
